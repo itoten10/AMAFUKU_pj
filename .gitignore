@@ -39,3 +39,25 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+# Node.js
+node_modules/
+*/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Next.js
+.next/
+out/
+
+# Secrets and tokens
+personal_access_token.txt
+
+# Temporary files
+nul
+*.tmp
+*.temp
+
+# Backend virtual environments  
+backend_venv/
