@@ -53,6 +53,7 @@ out/
 
 # Secrets and tokens
 personal_access_token.txt
+chatgpt_api.txt
 
 # Temporary files
 nul

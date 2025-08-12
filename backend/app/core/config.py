@@ -1,5 +1,6 @@
 from typing import List, Optional
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
+from pydantic import Field
 import os
 
 class Settings(BaseSettings):
@@ -18,6 +19,12 @@ class Settings(BaseSettings):
     
     GOOGLE_MAPS_API_KEY: str = os.getenv("GOOGLE_MAPS_API_KEY", "")
     
+    # OpenAI 設定（コスト効率重視）
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
+    OPENAI_MAX_TOKENS: int = int(os.getenv("OPENAI_MAX_TOKENS", "300"))
+    OPENAI_TEMPERATURE: float = float(os.getenv("OPENAI_TEMPERATURE", "0.7"))
+    
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost:3000",
         "http://localhost:8000",
@@ -25,7 +32,9 @@ class Settings(BaseSettings):
         "http://127.0.0.1:8000",
     ]
     
-    class Config:
-        case_sensitive = True
+    model_config = {
+        "case_sensitive": True,
+        "env_file": ".env"
+    }
 
 settings = Settings()

@@ -35,10 +35,10 @@ export default function Home() {
   const [quizMode, setQuizMode] = useState<'basic' | 'ai'>('basic')
   const [mapMode, setMapMode] = useState<'standard' | 'enhanced'>('enhanced')
 
-  // Google Maps APIの可用性をチェック（現在は無効化してサンプルモードを使用）
+  // Google Maps APIの可用性をチェック
   useState(() => {
-    // Google Maps APIが設定されていない、または有効化されていない場合はサンプルモードを使用
-    setIsGoogleMapsAvailable(true) // 一時的にfalseに固定してサンプルモードを使用
+    // Google Maps APIを有効化
+    setIsGoogleMapsAvailable(true) // Google Maps APIモードを使用
   })
 
   const handleRouteFound = (routeInfo: RouteInfo) => {

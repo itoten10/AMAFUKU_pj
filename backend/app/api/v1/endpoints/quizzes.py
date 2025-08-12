@@ -9,6 +9,7 @@ from app.models.user import User
 from app.models.quiz import Quiz, QuizAttempt
 from app.schemas.quiz import QuizCreate, QuizResponse, QuizAttemptCreate, QuizAttemptResponse
 from app.services.quiz import quiz_service
+from app.services.openai_service import openai_service
 
 router = APIRouter()
 
@@ -18,9 +19,39 @@ async def generate_quiz(
     difficulty: str = "中学生",
     current_user: User = Depends(get_current_active_user)
 ):
-    # Generate quiz using the service
+    # Generate quiz using the service (fallback method)
     quiz_data = await quiz_service.generate_quiz(spot_data, difficulty)
     return quiz_data
+
+@router.post("/generate-ai", response_model=Dict[str, Any])
+async def generate_ai_quiz(
+    spot_name: str,
+    spot_description: str,
+    difficulty: str = "中学生"
+):
+    """
+    OpenAI APIを使用した動的クイズ生成
+    認証不要でフロントエンドから直接呼び出し可能
+    """
+    # OpenAI APIでクイズ生成を試行
+    quiz_data = await openai_service.generate_quiz(
+        spot_name=spot_name,
+        spot_description=spot_description, 
+        difficulty=difficulty
+    )
+    
+    # OpenAI API失敗時はフォールバック
+    if not quiz_data:
+        quiz_data = await quiz_service.generate_quiz({
+            "name": spot_name,
+            "description": spot_description
+        }, difficulty)
+    
+    return {
+        "success": True,
+        "quiz": quiz_data,
+        "generated_by": "openai" if quiz_data and quiz_data.get("question") else "fallback"
+    }
 
 @router.post("/save", response_model=QuizResponse)
 async def save_quiz(

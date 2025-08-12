@@ -1,18 +1,20 @@
-from sqlalchemy import Column, Integer, String, DateTime, func
-from sqlalchemy.orm import relationship
+from sqlalchemy import String, DateTime, func
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import Optional, List
+from datetime import datetime
 from app.db.database import Base
 
 class User(Base):
     __tablename__ = "users"
     
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(50), unique=True, index=True, nullable=False)
-    email = Column(String(100), unique=True, index=True, nullable=False)
-    hashed_password = Column(String(255), nullable=False)
-    full_name = Column(String(100))
-    total_score = Column(Integer, default=0)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    username: Mapped[str] = mapped_column(String(50), unique=True, index=True)
+    email: Mapped[str] = mapped_column(String(100), unique=True, index=True)
+    hashed_password: Mapped[str] = mapped_column(String(255))
+    full_name: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    total_score: Mapped[int] = mapped_column(default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
     
-    quiz_attempts = relationship("QuizAttempt", back_populates="user")
-    routes = relationship("Route", back_populates="user")
+    quiz_attempts: Mapped[List["QuizAttempt"]] = relationship(back_populates="user")
+    routes: Mapped[List["Route"]] = relationship(back_populates="user")
